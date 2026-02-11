@@ -40,12 +40,12 @@ const defaultSources: Array<{
     selectors: {
       listPage: {
         url: 'https://www.business-standard.com/markets/news',
-        articleContainer: '.cardlist-stroy, .smallcard-story, [class*="card"]',
+        articleContainer: '.cardlist, [class*="cardlistlist"], [class*="image_card"]',
         title: 'a.smallcard-title, h2 a, h3 a, .headline a',
         link: 'a.smallcard-title, a[href*=".html"]',
-        summary: '.smallcard-desc, p',
-        image: 'img[src*="business-standard"]',
-        date: 'time, .date, .timestamp',
+        summary: '.bookreview-title, p',
+        image: 'img.lazy-img, img[data-src]',
+        date: '.updt-on, [class*="timestmp"] span, time',
       },
       articlePage: {
         title: 'h1.headline, h1',
@@ -146,10 +146,10 @@ const defaultSources: Array<{
     rateLimit: 2000,
     selectors: {
       listPage: {
-        url: 'https://www.financialexpress.com/market/stock-market/',
+        url: 'https://www.financialexpress.com/market/',
         articleContainer: 'article, .article-item, [class*="story-card"], li[class*="article"]',
         title: 'h2 a, h3 a, .entry-title a, a[title]',
-        link: 'a[href*="financialexpress.com"]',
+        link: 'a[href*="financialexpress.com"], a[href*="/market/"]',
         summary: '.excerpt, .desc, p',
         image: 'img[src*="financialexpress"], img[data-src]',
         date: 'time, .date, .post-date',

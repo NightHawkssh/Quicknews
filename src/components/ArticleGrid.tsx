@@ -48,7 +48,7 @@ export default function ArticleGrid() {
     : '';
 
   const { data, error, isLoading } = useSWR<ArticlesResponse>(
-    `/api/articles?page=${page}&pageSize=20${sourceIdsParam}`,
+    `/api/articles?page=${page}&pageSize=100${sourceIdsParam}`,
     fetcher,
     {
       refreshInterval: 5 * 60 * 1000,

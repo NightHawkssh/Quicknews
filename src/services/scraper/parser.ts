@@ -77,11 +77,11 @@ export function parseListPage(
         for (const sel of imageSelectors) {
           const imgEl = $el.find(sel).first();
           imageUrl =
-            imgEl.attr('src') ||
             imgEl.attr('data-src') ||
             imgEl.attr('data-lazy-src') ||
-            imgEl.attr('data-original');
-          if (imageUrl && !imageUrl.includes('grey_bg') && !imageUrl.includes('placeholder')) {
+            imgEl.attr('data-original') ||
+            imgEl.attr('src');
+          if (imageUrl && !imageUrl.includes('grey_bg') && !imageUrl.includes('placeholder') && !imageUrl.startsWith('data:')) {
             imageUrl = normalizeUrl(imageUrl, baseUrl);
             break;
           }
@@ -224,10 +224,11 @@ export function parseArticlePage(
     for (const sel of imageSelectors) {
       const imgEl = $(sel).first();
       const imageUrl =
-        imgEl.attr('src') ||
         imgEl.attr('data-src') ||
-        imgEl.attr('data-lazy-src');
-      if (imageUrl && !imageUrl.includes('placeholder')) {
+        imgEl.attr('data-lazy-src') ||
+        imgEl.attr('data-original') ||
+        imgEl.attr('src');
+      if (imageUrl && !imageUrl.includes('placeholder') && !imageUrl.startsWith('data:')) {
         result.imageUrl = normalizeUrl(imageUrl, baseUrl);
         break;
       }

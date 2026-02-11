@@ -3,7 +3,7 @@ import { SelectorConfig, ScrapedArticle, ScrapeResult } from '@/types';
 import { fetchPage } from './fetcher';
 import { parseListPage, parseArticlePage } from './parser';
 
-const MAX_ARTICLES_PER_SOURCE = 15;
+const MAX_ARTICLES_PER_SOURCE = 50;
 const FETCH_FULL_CONTENT = false; // Set to true to fetch full article content (slower)
 
 export async function scrapeSource(sourceId: string): Promise<ScrapeResult> {
