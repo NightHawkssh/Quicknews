@@ -34,24 +34,24 @@ interface ArticlesResponse {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-interface ArticleGridProps {
-  initialSourceId?: string;
-}
-
-export default function ArticleGrid({ initialSourceId }: ArticleGridProps) {
+export default function ArticleGrid() {
   const [page, setPage] = useState(1);
-  const [sourceId, setSourceId] = useState(initialSourceId || '');
+  const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set());
 
   const { data: sourcesData } = useSWR<{ success: boolean; data: Source[] }>(
     '/api/sources',
     fetcher
   );
 
+  const sourceIdsParam = selectedSources.size > 0
+    ? `&sourceIds=${Array.from(selectedSources).join(',')}`
+    : '';
+
   const { data, error, isLoading } = useSWR<ArticlesResponse>(
-    `/api/articles?page=${page}&pageSize=12${sourceId ? `&sourceId=${sourceId}` : ''}`,
+    `/api/articles?page=${page}&pageSize=20${sourceIdsParam}`,
     fetcher,
     {
-      refreshInterval: 5 * 60 * 1000, // 5 minutes
+      refreshInterval: 5 * 60 * 1000,
       revalidateOnFocus: true,
     }
   );
@@ -59,6 +59,24 @@ export default function ArticleGrid({ initialSourceId }: ArticleGridProps) {
   const sources = sourcesData?.data || [];
   const articles = data?.data?.items || [];
   const totalPages = data?.data?.totalPages || 1;
+
+  const toggleSource = (id: string) => {
+    setSelectedSources((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+    setPage(1);
+  };
+
+  const clearFilters = () => {
+    setSelectedSources(new Set());
+    setPage(1);
+  };
 
   if (error) {
     return (
@@ -70,47 +88,46 @@ export default function ArticleGrid({ initialSourceId }: ArticleGridProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="space-y-4">
+      {/* Source Filters */}
+      <div className="flex flex-wrap items-center gap-1.5">
         <button
-          onClick={() => {
-            setSourceId('');
-            setPage(1);
-          }}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            !sourceId
+          onClick={clearFilters}
+          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            selectedSources.size === 0
               ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
           }`}
         >
-          All Sources
+          All
         </button>
         {sources.map((source) => (
           <button
             key={source.id}
-            onClick={() => {
-              setSourceId(source.id);
-              setPage(1);
-            }}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              sourceId === source.id
+            onClick={() => toggleSource(source.id)}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+              selectedSources.has(source.id)
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
             }`}
           >
             {source.name}
           </button>
         ))}
+        {selectedSources.size > 0 && (
+          <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+            {selectedSources.size} selected
+          </span>
+        )}
       </div>
 
-      {/* Articles Grid */}
+      {/* Articles List */}
       {isLoading ? (
-        <ArticleGridSkeleton count={12} />
+        <ArticleGridSkeleton count={10} />
       ) : articles.length === 0 ? (
         <div className="text-center py-12">
           <svg
-            className="mx-auto h-12 w-12 text-gray-400"
+            className="mx-auto h-10 w-10 text-gray-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -122,12 +139,12 @@ export default function ArticleGrid({ initialSourceId }: ArticleGridProps) {
               d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
             />
           </svg>
-          <p className="mt-4 text-gray-500 dark:text-gray-400">
+          <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
             No articles found. Try refreshing the news feed.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="divide-y divide-gray-200 dark:divide-gray-800">
           {articles.map((article) => (
             <ArticleCard
               key={article.id}
@@ -144,19 +161,21 @@ export default function ArticleGrid({ initialSourceId }: ArticleGridProps) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-6">
+        <div className="flex items-center justify-center gap-2 pt-4">
           <Button
             variant="outline"
+            size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
             Previous
           </Button>
-          <span className="px-4 text-sm text-gray-600 dark:text-gray-400">
-            Page {page} of {totalPages}
+          <span className="px-3 text-xs text-gray-600 dark:text-gray-400">
+            {page} / {totalPages}
           </span>
           <Button
             variant="outline"
+            size="sm"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >

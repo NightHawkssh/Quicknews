@@ -7,10 +7,16 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || '20');
     const sourceId = searchParams.get('sourceId');
+    const sourceIds = searchParams.get('sourceIds');
 
     const skip = (page - 1) * pageSize;
 
-    const where = sourceId ? { sourceId } : {};
+    let where = {};
+    if (sourceIds) {
+      where = { sourceId: { in: sourceIds.split(',') } };
+    } else if (sourceId) {
+      where = { sourceId };
+    }
 
     const [articles, total] = await Promise.all([
       prisma.article.findMany({
