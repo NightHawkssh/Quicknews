@@ -18,7 +18,6 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@libsql/client": "^0.17.0",
     "@prisma/adapter-libsql": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "axios": "^1.13.5",
