@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import bcrypt from 'bcryptjs';
 
 interface SelectorConfig {
   listPage: {
@@ -230,6 +231,23 @@ async function main() {
     });
     console.log(`Created/updated source: ${source.name}`);
   }
+
+  // Create admin user
+  const adminPasswordHash = await bcrypt.hash('123456789As@', 12);
+  await prisma.user.upsert({
+    where: { username: 'sudarshandubey' },
+    update: {
+      passwordHash: adminPasswordHash,
+      role: 'admin',
+    },
+    create: {
+      email: 'sudarshandubey@quicknews.local',
+      username: 'sudarshandubey',
+      passwordHash: adminPasswordHash,
+      role: 'admin',
+    },
+  });
+  console.log('Created/updated admin user: sudarshandubey');
 
   console.log('Seeding completed!');
 }

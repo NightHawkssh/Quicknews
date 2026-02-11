@@ -3,13 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Header() {
   const pathname = usePathname();
+  const { user, isAdmin, logout, isLoading } = useAuth();
 
   const navItems = [
     { href: '/', label: 'News' },
-    { href: '/admin', label: 'Admin' },
+    ...(isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
   ];
 
   return (
@@ -25,23 +27,39 @@ export default function Header() {
             </span>
           </Link>
 
-          <nav className="flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                  pathname === item.href ||
-                    (item.href !== '/' && pathname.startsWith(item.href))
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800'
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="flex items-center space-x-4">
+            <nav className="flex items-center space-x-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                    pathname === item.href ||
+                      (item.href !== '/' && pathname.startsWith(item.href))
+                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800'
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            {!isLoading && user && (
+              <div className="flex items-center space-x-3 ml-2 pl-3 border-l border-gray-200 dark:border-gray-800">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {user.username}
+                </span>
+                <button
+                  onClick={logout}
+                  className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

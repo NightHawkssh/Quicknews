@@ -73,6 +73,24 @@ export interface ScrapeResult {
   error?: string;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  passwordHash: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string;
+  role: string;
+  createdAt: Date;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
