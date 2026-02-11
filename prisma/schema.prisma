@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Source {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  url           String
+  isActive      Boolean   @default(true)
+  selectors     String    // JSON stored as string for SQLite compatibility
+  rateLimit     Int       @default(2000)
+  lastScrapedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  articles      Article[]
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  title       String
+  summary     String?
+  content     String?
+  sourceUrl   String    @unique
+  imageUrl    String?
+  author      String?
+  publishedAt DateTime?
+  sourceId    String
+  source      Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  scrapedAt   DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([sourceId])
+  @@index([publishedAt])
+  @@index([scrapedAt])
+}
+
+model Settings {
+  id               String  @id @default("global")
+  scrapeInterval   Int     @default(30)
+  enableAutoScrape Boolean @default(true)
+  updatedAt        DateTime @updatedAt
+}
