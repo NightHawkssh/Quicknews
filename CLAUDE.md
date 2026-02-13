@@ -13,7 +13,7 @@ Quicknews is an Indian financial news aggregator that scrapes articles from conf
 - **Styling:** Tailwind CSS 4 (PostCSS plugin, `@import "tailwindcss"` syntax)
 - **Data Fetching:** SWR 2.4 (client-side), fetch (server-side API routes)
 - **Auth:** JWT (jose) + bcryptjs, stored in httpOnly `session` cookie
-- **Scraping:** Cheerio + Axios with configurable CSS selectors per source
+- **Scraping:** Cheerio + Axios with configurable CSS selectors per source + smart auto-detection fallback
 - **Deployment:** Vercel (standalone output), Turso for cloud DB
 
 ## Project Structure
@@ -68,6 +68,7 @@ src/
 │   ├── index.ts                # Main scraper orchestrator
 │   ├── fetcher.ts              # HTTP fetching with rate limiting
 │   ├── parser.ts               # HTML parsing with Cheerio using source selectors
+│   ├── auto-detect.ts          # Smart fallback: JSON-LD, __NEXT_DATA__, RSC, HTML heuristics, link analysis
 │   └── rate-limiter.ts         # Per-source rate limiting
 ├── middleware.ts                # Auth middleware (public paths, admin gate)
 └── types/index.ts              # All TypeScript interfaces
@@ -92,6 +93,14 @@ src/
 - Scraper fetches list page → parses article links → fetches each article → stores in DB
 - Rate limiting per source via configurable `rateLimit` (ms between requests)
 - Triggered manually via admin dashboard "Refresh" buttons or POST `/api/scrape`
+- **Auto-detection fallback** (`auto-detect.ts`): When configured selectors find 0 articles, the scraper tries 5 strategies in order:
+  1. **JSON-LD** — `<script type="application/ld+json">` structured data (most reliable)
+  2. **__NEXT_DATA__** — Next.js Pages Router embedded data
+  3. **RSC payload** — Next.js App Router `self.__next_f.push` data (for sites like YourStory)
+  4. **HTML heuristics** — Broad attribute-contains selectors (`[class*="Card"]`, `[class*="article"]`, etc.) + article URL pattern matching
+  5. **Link analysis** — Finds all `<a>` tags with article-like URLs (date segments, slug patterns)
+- `parser.ts` uses the list page URL as fallback base URL for resolving relative links
+- If `listPage.url` is empty, falls back to `source.url` for scraping
 
 ### Data Fetching
 - All client pages use SWR with auto-refresh intervals
@@ -130,7 +139,9 @@ src/
 - Vercel deployment via `npx vercel --prod --yes` (may need `vercel login` if token expires)
 
 ## Commit History (newest first)
-1. `501c9e6` — Add mobile-responsive design across entire app
+1. `8da8147` — Add smart auto-detection for scraping any news source
+2. `5b5bc55` — Add CLAUDE.md project context file
+3. `501c9e6` — Add mobile-responsive design across entire app
 2. `ffc20bd` — Add /api/health debug endpoint for Vercel troubleshooting
 3. `66d3515` — Fix Vercel deployment: remove conflicting deps and clean up build
 4. `0f67912` — Remove deprecated stub types and add Turso setup script

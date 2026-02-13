@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db';
 import { SelectorConfig, ScrapedArticle, ScrapeResult } from '@/types';
 import { fetchPage } from './fetcher';
 import { parseListPage, parseArticlePage } from './parser';
+import { autoDetectArticles } from './auto-detect';
 
 const MAX_ARTICLES_PER_SOURCE = 50;
 const FETCH_FULL_CONTENT = false; // Set to true to fetch full article content (slower)
@@ -27,20 +28,30 @@ export async function scrapeSource(sourceId: string): Promise<ScrapeResult> {
     articlesCount: 0,
   };
 
-  console.log(`[Scraper] Starting scrape for ${source.name} from ${selectors.listPage.url}`);
+  // Use listPage.url if set, otherwise fall back to the source's main URL
+  const listPageUrl = selectors.listPage.url || source.url;
+
+  console.log(`[Scraper] Starting scrape for ${source.name} from ${listPageUrl}`);
 
   try {
     // Fetch the list page
-    const html = await fetchPage(selectors.listPage.url, {
+    const html = await fetchPage(listPageUrl, {
       rateLimit: source.rateLimit,
     });
 
     console.log(`[Scraper] Fetched list page for ${source.name}, HTML length: ${html.length}`);
 
-    // Parse articles from the list page
-    const articles = parseListPage(html, selectors);
+    // Parse articles from the list page using configured selectors
+    let articles = parseListPage(html, selectors, listPageUrl);
 
-    console.log(`[Scraper] Parsed ${articles.length} articles from ${source.name}`);
+    console.log(`[Scraper] Parsed ${articles.length} articles from ${source.name} using selectors`);
+
+    // If selectors found nothing, fall back to auto-detection
+    if (articles.length === 0) {
+      console.log(`[Scraper] Selectors found 0 articles for ${source.name}, trying auto-detection...`);
+      articles = autoDetectArticles(html, listPageUrl);
+      console.log(`[Scraper] Auto-detection found ${articles.length} articles from ${source.name}`);
+    }
 
     // Limit the number of articles to process
     const articlesToProcess = articles.slice(0, MAX_ARTICLES_PER_SOURCE);

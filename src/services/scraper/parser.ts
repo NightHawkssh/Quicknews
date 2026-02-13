@@ -4,12 +4,13 @@ import { normalizeUrl, cleanHtml, truncateText } from '@/lib/utils';
 
 export function parseListPage(
   html: string,
-  selectors: SelectorConfig
+  selectors: SelectorConfig,
+  pageUrl?: string
 ): ScrapedArticle[] {
   const $ = cheerio.load(html);
   const articles: ScrapedArticle[] = [];
   const { listPage, transforms } = selectors;
-  const baseUrl = transforms?.baseUrl || '';
+  const baseUrl = transforms?.baseUrl || pageUrl || '';
   const seenUrls = new Set<string>();
 
   // Try multiple container selectors
@@ -51,9 +52,7 @@ export function parseListPage(
       seenUrls.add(sourceUrl);
 
       // Skip non-article URLs
-      if (sourceUrl.includes('#') ||
-          sourceUrl.includes('javascript:') ||
-          sourceUrl.endsWith('/') && !sourceUrl.includes('news')) {
+      if (sourceUrl.includes('javascript:') || sourceUrl === '#') {
         return;
       }
 
