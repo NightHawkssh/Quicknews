@@ -14,7 +14,7 @@ export default function HomePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
-      <div className="flex items-center justify-between gap-4 mb-5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             Financial News

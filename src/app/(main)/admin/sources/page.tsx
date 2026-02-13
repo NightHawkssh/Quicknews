@@ -159,7 +159,7 @@ export default function SourcesPage() {
                 />
               </svg>
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
               Manage Sources
             </h1>
           </div>
@@ -190,15 +190,15 @@ export default function SourcesPage() {
               </div>
               <button
                 onClick={() => handleToggleActive(source)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
                   source.isActive
                     ? 'bg-blue-600'
                     : 'bg-gray-200 dark:bg-gray-700'
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    source.isActive ? 'translate-x-6' : 'translate-x-1'
+                  className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                    source.isActive ? 'translate-x-7' : 'translate-x-1'
                   }`}
                 />
               </button>
@@ -262,7 +262,7 @@ export default function SourcesPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingSource ? 'Edit Source' : 'Add Source'}
-        className="max-w-2xl"
+        className="sm:max-w-2xl"
       >
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-2 gap-4">
@@ -316,7 +316,7 @@ export default function SourcesPage() {
             <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-4">
               List Page Selectors
             </h4>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Article Container"
                 value={formData.selectors.listPage.articleContainer}
@@ -392,7 +392,7 @@ export default function SourcesPage() {
             <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-4">
               Article Page Selectors
             </h4>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Content Selector"
                 value={formData.selectors.articlePage.content}

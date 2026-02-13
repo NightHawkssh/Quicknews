@@ -48,13 +48,13 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
       <div
         ref={modalRef}
         className={cn(
-          'bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden',
+          'bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden',
           'animate-in fade-in-0 zoom-in-95',
           className
         )}
@@ -66,7 +66,7 @@ export default function Modal({
             </h2>
             <button
               onClick={onClose}
-              className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               <svg
                 className="w-5 h-5 text-gray-500"

@@ -82,7 +82,7 @@ export default function ArticlePage({
   const article = data.data;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Back Link */}
       <Link
         href="/"
@@ -118,7 +118,7 @@ export default function ArticlePage({
             )}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-4">
             {article.title}
           </h1>
 
@@ -131,7 +131,7 @@ export default function ArticlePage({
 
         {/* Featured Image */}
         {article.imageUrl && (
-          <div className="relative w-full h-64 sm:h-96 mb-8 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+          <div className="relative w-full h-48 sm:h-64 md:h-96 mb-8 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
             <Image
               src={article.imageUrl}
               alt={article.title}
@@ -149,7 +149,7 @@ export default function ArticlePage({
         {/* Summary */}
         {article.summary && !article.content && (
           <div className="prose prose-lg dark:prose-invert max-w-none mb-8">
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+            <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
               {article.summary}
             </p>
           </div>

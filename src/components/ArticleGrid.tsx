@@ -90,10 +90,10 @@ export default function ArticleGrid() {
   return (
     <div className="space-y-4">
       {/* Source Filters */}
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={clearFilters}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+          className={`px-3 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
             selectedSources.size === 0
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
@@ -105,7 +105,7 @@ export default function ArticleGrid() {
           <button
             key={source.id}
             onClick={() => toggleSource(source.id)}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
               selectedSources.has(source.id)
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
@@ -170,7 +170,7 @@ export default function ArticleGrid() {
           >
             Previous
           </Button>
-          <span className="px-3 text-xs text-gray-600 dark:text-gray-400">
+          <span className="px-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
             {page} / {totalPages}
           </span>
           <Button

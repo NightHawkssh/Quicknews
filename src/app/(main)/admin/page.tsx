@@ -93,7 +93,7 @@ export default function AdminPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
             Admin Dashboard
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
@@ -203,8 +203,8 @@ export default function AdminPage() {
         </Card>
       </div>
 
-      {/* Sources Table */}
-      <Card>
+      {/* Sources Table — desktop */}
+      <Card className="hidden md:block">
         <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Source Status
@@ -275,6 +275,57 @@ export default function AdminPage() {
           </table>
         </div>
       </Card>
+
+      {/* Sources Cards — mobile */}
+      <div className="md:hidden space-y-3">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Source Status
+        </h2>
+        {sources.map((source) => (
+          <Card key={source.id}>
+            <CardContent>
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-medium text-gray-900 dark:text-gray-100">
+                  {source.name}
+                </span>
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    source.isActive
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+                  }`}
+                >
+                  {source.isActive ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+              <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400 mb-3">
+                <div className="flex justify-between">
+                  <span>Articles</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{source.articleCount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Last Scraped</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {source.lastScrapedAt
+                      ? formatRelativeTime(source.lastScrapedAt)
+                      : 'Never'}
+                  </span>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => handleRefreshSource(source.id)}
+                isLoading={refreshingSourceId === source.id}
+                disabled={!source.isActive || refreshingSourceId !== null}
+              >
+                Refresh
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
